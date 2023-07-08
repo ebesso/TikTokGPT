@@ -11,7 +11,7 @@ reddit = praw.Reddit(
 
 relevant_flairs = ['Not the A-hole', 'Everyone Sucks', 'Asshole']
 
-path = "content/reddit/AITA/'{file_name}.txt'"
+path = "content/reddit/AITA/{file_name}.txt"
 
 nbr_of_posts=100
 
