@@ -7,7 +7,7 @@ def save_story(title, content):
 
 openai.api_key = os.environ['OPENAI_SECRET']
 
-nbr_of_stories = 1
+nbr_of_stories = 10
 
 total_prompt_tokens = 0
 total_completion_tokens = 0
@@ -45,15 +45,20 @@ for i in range(nbr_of_stories):
                 }
             }    
         ],
-        function_call={"name": "save_story"}
+        function_call={"name": "save_story"},
+        temperature=1
     )
+    try:
+        arguments = json.loads(resp['choices'][0]['message']['function_call']['arguments'])
 
-    arguments = json.loads(resp['choices'][0]['message']['function_call']['arguments'])
+        save_story(arguments['title'], arguments['content'])
+        print(f"Saved {arguments['title']} ({i + 1}/{nbr_of_stories})")
 
-    save_story(arguments['title'], arguments['content'])
+        total_prompt_tokens += resp['usage']['prompt_tokens']
+        total_completion_tokens += resp['usage']['completion_tokens']
+    except json.JSONDecodeError:
+        print(f'Failed to generate function arguments {i + 1}/{nbr_of_stories}')
 
-    total_prompt_tokens += resp['usage']['prompt_tokens']
-    total_completion_tokens += resp['usage']['completion_tokens']
 
 usd_to_sek = 10.82
 
